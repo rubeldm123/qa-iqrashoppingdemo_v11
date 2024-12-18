@@ -1,0 +1,207 @@
+Version 7: Jenkins Installation and GitHub Integration
+
+Section 1: Install Jenkins
+
+For Windows:
+
+1. Install Jenkins on Windows
+
+    1. Download Jenkins:
+            Go to Jenkins Official Website and download the Windows .war file.(https://www.jenkins.io/download/)
+    2. Install Java:
+            Download and install JDK 17 from Oracle.
+    3. Run Jenkins:
+        Open Command Prompt and run:
+            java -jar jenkins.war --httpPort=8080
+    4. Access Jenkins:
+        > Open a browser and go to: http://localhost:8080.
+
+    5. Unlock Jenkins:
+       > The initialAdminPassword will appear in the terminal.
+       > Copy and paste it into the browser.
+
+
+Section 2: Connect Jenkins to GitHub
+2.1 Generate a Personal Access Token on GitHub
+    1. Go to GitHub → Settings → Developer Settings → Personal Access Tokens.
+    2. Generate a token with repo and workflow scopes.
+    3. Copy the token for later use.
+
+2.2 Add Credentials to Jenkins
+    1. Go to Jenkins → Manage Jenkins → Security: Credentials.
+    2. Click Global Credentials → Add Credentials.
+    3. Enter:
+        Kind: Username with password.
+        Username: rubeldm123
+        Password: GitHub Token.
+        ID: github-credentials.
+        -->Click Create
+
+2.3 Add Maven and Java Globally in Jenkins
+    Step 1: Install Maven in Jenkins
+        1. Go to the Jenkins Dashboard.
+
+        2. Navigate to Manage Jenkins →  Tool Configuration.
+
+        3. Scroll down to the Maven section.
+
+        4. Click Add Maven:
+            > Name: Provide a name (e.g., Maven_3.9.9).
+            > Install Automatically: Check this box.
+            > Version: Select the desired Maven version from the dropdown.
+        5. Save the configuration.
+
+    Step 2: Install Java in Jenkins
+        1. Go to Manage Jenkins → Global Tool Configuration.
+
+        2. Scroll down to the JDK section.
+
+        3. Click Add JDK:
+
+            Name: Provide a name (e.g., JDK_17).
+            Install Automatically: Check this box.
+            Accept the Oracle license agreement (if prompted).
+        4. Save the configuration.
+
+
+2.4 Create a Pipeline in Jenkins
+    1. Go to Jenkins Dashboard → New Item → Pipeline.
+
+    2. Provide a name (e.g., Run_Project_V6) and click OK.
+
+    3. Scroll down to Pipeline Script and add the following:
+    ------------------------------------------------------------->
+
+    pipeline {
+        agent any
+
+        tools {
+            maven 'Maven_3.9.9'  // Name you provided in Global Tool Configuration
+            jdk 'JDK_17'         // Name you provided in Global Tool Configuration
+        }
+
+        stages {
+            stage('Checkout') {
+                steps {
+                    git branch: 'main',
+                        credentialsId: 'github-credentials',
+                        url: 'https://github.com/rubeldm123/qa-iqrashoppingdemo_v6.git'
+                }
+            }
+
+            stage('Build') {
+                steps {
+                    echo 'Building the project...'
+                    sh 'mvn clean install'
+                }
+            }
+
+            stage('Test') {
+                steps {
+                    echo 'Running tests...'
+                    sh 'mvn test'
+                }
+            }
+
+            stage('Deploy') {
+                steps {
+                    echo 'Deploying the project...'
+                }
+            }
+        }
+    }
+
+
+
+
+-----------------------------------------------------------------------------------------------------------
+Section 1: Install Jenkins
+
+For Mac:
+    Section 1: Install Jenkins
+        1.1 Install Jenkins on Mac
+            1. Install Homebrew (if not installed):
+                > /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        2. Install Java JDK (Jenkins requires Java):
+            > brew install openjdk@17
+            > export PATH="/usr/local/opt/openjdk@17/bin:$PATH"
+
+        3. Install Jenkins:
+            > brew install jenkins-lts
+
+        4. Start Jenkins Service:
+            > brew services start jenkins-lts
+
+        5.  Retrieve Initial Admin Password:
+            > cat /Users/$(whoami)/.jenkins/secrets/initialAdminPassword
+        5A. If the password file doesn’t exist, restart Jenkins:
+            > brew services restart jenkins-lts
+        6. Access Jenkins
+             > http://localhost:8080
+        7. copy past the admin password
+        8. select install suggested plugins
+        9.Create a Admin User
+            username: admin2010
+            password:admin2010
+            Full name: admin
+            email: admin2010@gmail.com
+        10. CLick Save
+        11.Click save and finish
+
+
+
+
+-------------->remove the existing Jenkins installation from mac-------------------------
+Step 1: Stop Jenkins Service
+    1. Stop Jenkins if it is running:
+        > brew services stop jenkins-lts
+Step 2: Uninstall Jenkins
+        1. Uninstall Jenkins using Homebrew:
+            > brew uninstall jenkins-lts
+        2. Verify Jenkins is removed:
+            > brew list | grep jenkins
+
+Step 3: Remove Jenkins Configuration and Data
+    1. Delete Jenkins home directory:
+        > rm -rf /Users/$(whoami)/.jenkins
+
+    2. Remove Jenkins logs and related files:
+        > rm -rf /usr/local/var/log/jenkins
+    3. Remove Jenkins cache:
+        > rm -rf ~/Library/Caches/Homebrew/jenkins*
+Step 4: Reinstall Jenkins
+    1. Install Jenkins again using Homebrew:
+        > brew install jenkins-lts
+    2. Start Jenkins as a service:
+        > brew services start jenkins-lts
+    3. Verify Jenkins is running:
+        > brew services list
+Step 5: Retrieve Initial Admin Password
+
+1. Check the logs for the initialAdminPassword:
+    > cat /Users/$(whoami)/.jenkins/secrets/initialAdminPassword
+2. If the password file doesn’t exist, restart Jenkins:
+    > brew services restart jenkins-lts
+
+3. Check logs to find the password:
+    > tail -f /usr/local/var/log/jenkins.log
+
+Step 6: Access Jenkins:
+       1. Open a browser and visit:
+          http://localhost:8080
+       2. Paste the initialAdminPassword to unlock Jenkins.
+       3. Follow the Jenkins setup wizard to configure your new installation.
+
+
+------------------------------------------------------------------------->
+Step 1: Remove the Existing .git Folder
+    > cd /Users/mdrubel/Documents/java_workspace/qa-iqrashoppingdemo_v7
+    >rm -rf .git
+
+Step 2: Reinitialize the Git Repository
+    1. Initialize a new Git repository:
+        > mds-MacBook-Pro:qa-iqrashoppingdemo_v7 mdrubel$ git init
+    2. Add your project files to the staging area:
+       > 
+
+
