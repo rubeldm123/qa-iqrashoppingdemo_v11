@@ -202,6 +202,18 @@ Step 2: Reinitialize the Git Repository
     1. Initialize a new Git repository:
         > mds-MacBook-Pro:qa-iqrashoppingdemo_v7 mdrubel$ git init
     2. Add your project files to the staging area:
-       > 
+       > mds-MacBook-Pro:qa-iqrashoppingdemo_v7 mdrubel$ git add .
+    3. Commit the files:
+        > git commit -m "Initial commit for qa-iqrashoppingdemo_v7"
 
+Step 3: Link the Remote Repository
+    1. Add the GitHub repository as the remote origin:
+        > git remote add origin https://github.com/rubeldm123/qa-iqrashoppingdemo_v7.git
+
+    2. Verify the remote link:
+        > mds-MacBook-Pro:qa-iqrashoppingdemo_v7 mdrubel$ git remote -v
+Step 4: Push Code to GitHub
+    1. Push the code to the main branch:
+        > mds-MacBook-Pro:qa-iqrashoppingdemo_v7 mdrubel$ git branch -M main
+        > mds-MacBook-Pro:qa-iqrashoppingdemo_v7 mdrubel$ git push -u origin main
 
