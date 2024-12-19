@@ -1,6 +1,299 @@
-Version 7: Jenkins Installation and GitHub Integration
+Version 9: Enhanced Customer Workflow with BDD Cucumber and Force Delete
 
-Section 1: Install Jenkins
+Section 1: Project Configuration
+             1.  Project structure:
+                qa-iqrashoppingdemo_v9/
+                ├── pom.xml
+                ├── src/
+                │   ├── main/
+                │   ├── test/
+                │   │   ├── java/
+                │   │   │   ├── features/
+                │   │   │   │   └── CustomerWorkflow.feature
+                │   │   │   ├── stepdefinitions/
+                │   │   │   │   └── CustomerStepDefinitions.java
+                │   │   │   └── utils/
+                │   │   │       └── Config.java
+
+            2. pom.xml
+                <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+                  <modelVersion>4.0.0</modelVersion>
+
+                  <groupId>com.iqrashoppingdemo</groupId>
+                  <artifactId>qa-iqrashoppingdemo_v9</artifactId>
+                  <version>1.9</version>
+                  <packaging>jar</packaging>
+
+                  <name>qa-iqrashoppingdemo</name>
+                  <url>http://maven.apache.org</url>
+
+                  <properties>
+                    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+                    <maven.compiler.source>17</maven.compiler.source>
+                    <maven.compiler.target>17</maven.compiler.target>
+                  </properties>
+
+                  <dependencies>
+                    <!-- RestAssured for API Testing -->
+                    <dependency>
+                      <groupId>io.rest-assured</groupId>
+                      <artifactId>rest-assured</artifactId>
+                      <version>5.3.0</version>
+                    </dependency>
+
+                    <!-- Jackson Databind for JSON -->
+                    <dependency>
+                      <groupId>com.fasterxml.jackson.core</groupId>
+                      <artifactId>jackson-databind</artifactId>
+                      <version>2.15.2</version>
+                    </dependency>
+
+                    <!-- TestNG for Testing -->
+                    <dependency>
+                      <groupId>org.testng</groupId>
+                      <artifactId>testng</artifactId>
+                      <version>7.8.0</version>
+                      <scope>test</scope>
+                    </dependency>
+
+                    <!-- ExtentReports for Reporting -->
+                    <dependency>
+                      <groupId>com.aventstack</groupId>
+                      <artifactId>extentreports</artifactId>
+                      <version>5.1.2</version>
+                    </dependency>
+
+                    <!-- Cucumber Java for BDD -->
+                    <dependency>
+                      <groupId>io.cucumber</groupId>
+                      <artifactId>cucumber-java</artifactId>
+                      <version>7.13.0</version>
+                    </dependency>
+
+                    <!-- Cucumber JUnit for Test Runner -->
+                    <dependency>
+                      <groupId>io.cucumber</groupId>
+                      <artifactId>cucumber-junit</artifactId>
+                      <version>7.13.0</version>
+                    </dependency>
+                  </dependencies>
+
+                  <build>
+                    <plugins>
+                      <!-- Compiler Plugin -->
+                      <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>3.10.1</version>
+                        <configuration>
+                          <source>${maven.compiler.source}</source>
+                          <target>${maven.compiler.target}</target>
+                        </configuration>
+                      </plugin>
+
+                      <!-- Surefire Plugin for Running Tests -->
+                      <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>3.0.0</version>
+                        <configuration>
+                          <systemPropertyVariables>
+                            <cucumber.plugin>html:target/cucumber-reports.html,json:target/cucumber.json</cucumber.plugin>
+                          </systemPropertyVariables>
+                          <includes>
+                            <include>**/*Test*.java</include>
+                          </includes>
+                        </configuration>
+                      </plugin>
+                    </plugins>
+                  </build>
+                </project>
+
+            4. Feature File
+               Location: src/test/java/features/CustomerWorkflow.feature
+                    Feature: Customer Workflow
+
+                      Scenario: Create a new customer
+                        Given the API base URL is configured
+                        When I send a POST request to create a customer
+                        Then the customer is created successfully with status code 201
+
+                      Scenario: Retrieve the created customer
+                        Given the API base URL is configured
+                        When I send a GET request to retrieve the customer
+                        Then the customer details are retrieved with status code 200
+
+                      Scenario: Update the customer email
+                        Given the API base URL is configured
+                        When I send a PUT request to update the customer email
+                        Then the customer email is updated successfully with status code 200
+
+                      Scenario: Delete the created customer
+                        Given the API base URL is configured
+                        When I send a DELETE request to delete the customer
+                        Then the customer is deleted successfully with status code 200
+
+            5. Step Definitions
+               Location: src/test/java/stepdefinitions/CustomerStepDefinitions.java
+                    package stepdefinitions;
+
+                    import io.cucumber.java.en.*;
+                    import io.restassured.response.Response;
+                    import org.testng.Assert;
+                    import utils.Config;
+
+                    import java.util.HashMap;
+
+                    import static io.restassured.RestAssured.*;
+
+                    public class CustomerStepDefinitions {
+
+                        static int customerId;
+                        static String customerEmail;
+                        Response response;
+
+                        @Given("the API base URL is configured")
+                        public void theApiBaseUrlIsConfigured() {
+                            baseURI = Config.BASE_URL;
+                        }
+
+                        @When("I send a POST request to create a customer")
+                        public void iSendAPostRequestToCreateACustomer() {
+                            String randomString = generateRandomString(8);
+                            customerEmail = randomString + "@example.com";
+
+                            HashMap<String, String> requestBody = new HashMap<>();
+                            requestBody.put("email", customerEmail);
+                            requestBody.put("first_name", "John");
+                            requestBody.put("last_name", "Doe");
+                            requestBody.put("username", "user_" + randomString);
+                            requestBody.put("password", "password123");
+
+                            response = given()
+                                    .auth().preemptive().basic(Config.CONSUMER_KEY, Config.CONSUMER_SECRET)
+                                    .header("Content-Type", "application/json")
+                                    .body(requestBody)
+                                    .when().post();
+                            customerId = response.jsonPath().getInt("id");
+                        }
+
+                        @Then("the customer is created successfully with status code {int}")
+                        public void theCustomerIsCreatedSuccessfullyWithStatusCode(int statusCode) {
+                            Assert.assertEquals(response.getStatusCode(), statusCode,
+                                    "Status code mismatch for creating a customer.");
+                        }
+
+                        @When("I send a GET request to retrieve the customer")
+                        public void iSendAGetRequestToRetrieveTheCustomer() {
+                            response = given()
+                                    .auth().preemptive().basic(Config.CONSUMER_KEY, Config.CONSUMER_SECRET)
+                                    .when().get(baseURI + customerId);
+                        }
+
+                        @Then("the customer details are retrieved with status code {int}")
+                        public void theCustomerDetailsAreRetrievedWithStatusCode(int statusCode) {
+                            Assert.assertEquals(response.getStatusCode(), statusCode,
+                                    "Status code mismatch for retrieving customer details.");
+                            Assert.assertEquals(response.jsonPath().getString("email"), customerEmail,
+                                    "Customer email mismatch.");
+                        }
+
+                        @When("I send a PUT request to update the customer email")
+                        public void iSendAPutRequestToUpdateTheCustomerEmail() {
+                            String updatedEmail = "updated_" + generateRandomString(5) + "@example.com";
+
+                            HashMap<String, String> requestBody = new HashMap<>();
+                            requestBody.put("email", updatedEmail);
+
+                            response = given()
+                                    .auth().preemptive().basic(Config.CONSUMER_KEY, Config.CONSUMER_SECRET)
+                                    .header("Content-Type", "application/json")
+                                    .body(requestBody)
+                                    .when().put(baseURI + customerId);
+
+                            customerEmail = updatedEmail;
+                        }
+
+                        @Then("the customer email is updated successfully with status code {int}")
+                        public void theCustomerEmailIsUpdatedSuccessfullyWithStatusCode(int statusCode) {
+                            Assert.assertEquals(response.getStatusCode(), statusCode,
+                                    "Status code mismatch for updating customer email.");
+                        }
+
+                        @When("I send a DELETE request to delete the customer")
+                        public void iSendADeleteRequestToDeleteTheCustomer() {
+                            response = given()
+                                    .auth().preemptive().basic(Config.CONSUMER_KEY, Config.CONSUMER_SECRET)
+                                    .when().delete(baseURI + customerId + "?force=true");
+
+                            // Log the response for debugging purposes
+                            System.out.println("DELETE Response Status Code: " + response.getStatusCode());
+                            System.out.println("DELETE Response Body: " + response.getBody().asString());
+                        }
+
+                        @Then("the customer is deleted successfully with status code {int}")
+                        public void theCustomerIsDeletedSuccessfullyWithStatusCode(int expectedStatusCode) {
+                            int actualStatusCode = response.getStatusCode();
+
+                            // Validate the status code
+                            Assert.assertEquals(actualStatusCode, expectedStatusCode,
+                                    "Status code mismatch for deleting the customer. Expected: " + expectedStatusCode + " but got: " + actualStatusCode);
+                        }
+
+                        private String generateRandomString(int length) {
+                            String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+                            StringBuilder builder = new StringBuilder();
+                            for (int i = 0; i < length; i++) {
+                                builder.append(chars.charAt((int) (Math.random() * chars.length())));
+                            }
+                            return builder.toString();
+                        }
+                    }
+            6. Test Runner
+                Location: src/test/java/runners/TestRunner.java
+                    package runners;
+
+                    import org.junit.runner.RunWith;
+                    import io.cucumber.junit.Cucumber;
+                    import io.cucumber.junit.CucumberOptions;
+
+                    @RunWith(Cucumber.class)
+                    @CucumberOptions(
+                            features = "src/test/java/features",
+                            glue = "stepdefinitions",
+                            plugin = {"pretty", "html:target/cucumber-reports.html"}
+                    )
+                    public class TestRunner {
+                    }
+
+Section2: git and Github
+        Step 1: Initialize a new Git repository:
+                > mds-MacBook-Pro:qa-iqrashoppingdemo_v9 mdrubel$ git init
+            2. Add your project files to the staging area:
+               > mds-MacBook-Pro:qa-iqrashoppingdemo_v9 mdrubel$ git add .
+            3. Commit the files:
+                > git commit -m "Initial commit for qa-iqrashoppingdemo_v9"
+
+        Step 2: Create a Repository and Link the Remote Repository
+            1. Add the GitHub repository as the remote origin:
+                > git remote set-url origin https://github.com/rubeldm123/qa-iqrashoppingdemo_v9.git
+
+            2. Verify the remote link:
+                > mds-MacBook-Pro:qa-iqrashoppingdemo_v8 mdrubel$ git remote -v
+        Step 43: Push Code to GitHub
+            1. Push the code to the main branch:
+                > mds-MacBook-Pro:qa-iqrashoppingdemo_v8 mdrubel$ git branch -M main
+                > mds-MacBook-Pro:qa-iqrashoppingdemo_v8 mdrubel$ git push -u origin main
+
+
+
+
+
+
+
+
+
 
 For Windows:
 
@@ -67,7 +360,7 @@ Section 2: Connect Jenkins to GitHub
 2.4 Create a Pipeline in Jenkins
     1. Go to Jenkins Dashboard → New Item → Pipeline.
 
-    2. Provide a name (e.g., Run_Project_V6) and click OK.
+    2. Provide a name (e.g., Run_Project_V8) and click OK.
 
     3. Scroll down to Pipeline Script and add the following:
     ------------------------------------------------------------->
@@ -208,7 +501,7 @@ Step 2: Reinitialize the Git Repository
 
 Step 3: Link the Remote Repository
     1. Add the GitHub repository as the remote origin:
-        > git remote add origin https://github.com/rubeldm123/qa-iqrashoppingdemo_v8.git
+        > git remote set origin https://github.com/rubeldm123/qa-iqrashoppingdemo_v8.git
 
     2. Verify the remote link:
         > mds-MacBook-Pro:qa-iqrashoppingdemo_v8 mdrubel$ git remote -v

@@ -3,8 +3,8 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.iqrashoppingdemo</groupId>
-  <artifactId>qa-iqrashoppingdemo_v8</artifactId>
-  <version>1.8</version>
+  <artifactId>qa-iqrashoppingdemo_v9</artifactId>
+  <version>1.9</version>
   <packaging>jar</packaging>
 
   <name>qa-iqrashoppingdemo</name>
@@ -12,6 +12,8 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
   </properties>
 
   <dependencies>
@@ -37,20 +39,26 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- https://mvnrepository.com/artifact/com.aventstack/extentreports -->
+    <!-- ExtentReports for Reporting -->
     <dependency>
       <groupId>com.aventstack</groupId>
       <artifactId>extentreports</artifactId>
       <version>5.1.2</version>
     </dependency>
+
+    <!-- Cucumber Java for BDD -->
     <dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
-      <version>2.10.1</version>
+      <groupId>io.cucumber</groupId>
+      <artifactId>cucumber-java</artifactId>
+      <version>7.13.0</version>
     </dependency>
 
-
-
+    <!-- Cucumber JUnit for Test Runner -->
+    <dependency>
+      <groupId>io.cucumber</groupId>
+      <artifactId>cucumber-junit</artifactId>
+      <version>7.13.0</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -61,8 +69,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.10.1</version>
         <configuration>
-          <source>17</source>
-          <target>17</target>
+          <source>${maven.compiler.source}</source>
+          <target>${maven.compiler.target}</target>
         </configuration>
       </plugin>
 
@@ -72,6 +80,9 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.0.0</version>
         <configuration>
+          <systemPropertyVariables>
+            <cucumber.plugin>html:target/cucumber-reports.html,json:target/cucumber.json</cucumber.plugin>
+          </systemPropertyVariables>
           <includes>
             <include>**/*Test*.java</include>
           </includes>
