@@ -85,7 +85,7 @@ Section 2: Connect Jenkins to GitHub
                 steps {
                     git branch: 'main',
                         credentialsId: 'github-credentials',
-                        url: 'https://github.com/rubeldm123/qa-iqrashoppingdemo_v7.git'
+                        url: 'https://github.com/rubeldm123/qa-iqrashoppingdemo_v8.git'
                 }
             }
 
@@ -195,25 +195,25 @@ Step 6: Access Jenkins:
 
 ------------------------------------------------------------------------->
 Step 1: Remove the Existing .git Folder
-    > cd /Users/mdrubel/Documents/java_workspace/qa-iqrashoppingdemo_v7
+    > cd /Users/mdrubel/Documents/java_workspace/qa-iqrashoppingdemo_v8
     >rm -rf .git
 
 Step 2: Reinitialize the Git Repository
     1. Initialize a new Git repository:
-        > mds-MacBook-Pro:qa-iqrashoppingdemo_v7 mdrubel$ git init
+        > mds-MacBook-Pro:qa-iqrashoppingdemo_v8 mdrubel$ git init
     2. Add your project files to the staging area:
-       > mds-MacBook-Pro:qa-iqrashoppingdemo_v7 mdrubel$ git add .
+       > mds-MacBook-Pro:qa-iqrashoppingdemo_v8 mdrubel$ git add .
     3. Commit the files:
-        > git commit -m "Initial commit for qa-iqrashoppingdemo_v7"
+        > git commit -m "Initial commit for qa-iqrashoppingdemo_v8"
 
 Step 3: Link the Remote Repository
     1. Add the GitHub repository as the remote origin:
-        > git remote add origin https://github.com/rubeldm123/qa-iqrashoppingdemo_v7.git
+        > git remote add origin https://github.com/rubeldm123/qa-iqrashoppingdemo_v8.git
 
     2. Verify the remote link:
-        > mds-MacBook-Pro:qa-iqrashoppingdemo_v7 mdrubel$ git remote -v
+        > mds-MacBook-Pro:qa-iqrashoppingdemo_v8 mdrubel$ git remote -v
 Step 4: Push Code to GitHub
     1. Push the code to the main branch:
-        > mds-MacBook-Pro:qa-iqrashoppingdemo_v7 mdrubel$ git branch -M main
-        > mds-MacBook-Pro:qa-iqrashoppingdemo_v7 mdrubel$ git push -u origin main
+        > mds-MacBook-Pro:qa-iqrashoppingdemo_v8 mdrubel$ git branch -M main
+        > mds-MacBook-Pro:qa-iqrashoppingdemo_v8 mdrubel$ git push -u origin main
 
