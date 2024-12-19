@@ -85,7 +85,7 @@ Section 2: Connect Jenkins to GitHub
                 steps {
                     git branch: 'main',
                         credentialsId: 'github-credentials',
-                        url: 'https://github.com/rubeldm123/qa-iqrashoppingdemo_v6.git'
+                        url: 'https://github.com/rubeldm123/qa-iqrashoppingdemo_v7.git'
                 }
             }
 
