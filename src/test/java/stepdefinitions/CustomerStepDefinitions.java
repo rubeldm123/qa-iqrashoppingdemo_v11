@@ -11,7 +11,7 @@ import static io.restassured.RestAssured.*;
 
 public class CustomerStepDefinitions {
 
-    static int customerId;
+    static int customerId = -1;
     static String customerEmail;
     Response response;
 
@@ -37,34 +37,43 @@ public class CustomerStepDefinitions {
                 .header("Content-Type", "application/json")
                 .body(requestBody)
                 .when().post();
-        customerId = response.jsonPath().getInt("id");
+
+        System.out.println("POST Response: " + response.asString());
+        if (response.statusCode() == 201) {
+            customerId = response.jsonPath().getInt("id");
+        } else {
+            System.err.println("Failed to create customer. Status code: " + response.statusCode());
+        }
     }
 
     @Then("the customer is created successfully with status code {int}")
     public void theCustomerIsCreatedSuccessfullyWithStatusCode(int statusCode) {
-        Assert.assertEquals(response.getStatusCode(), statusCode,
-                "Status code mismatch for creating a customer.");
+        Assert.assertEquals(response.getStatusCode(), statusCode, "Customer creation failed.");
+        Assert.assertTrue(customerId > 0, "Invalid customer ID.");
     }
 
     @When("I send a GET request to retrieve the customer")
     public void iSendAGetRequestToRetrieveTheCustomer() {
+        if (customerId <= 0) {
+            Assert.fail("Cannot retrieve customer. Invalid customer ID.");
+        }
+
         response = given()
                 .auth().preemptive().basic(Config.CONSUMER_KEY, Config.CONSUMER_SECRET)
                 .when().get(baseURI + customerId);
+
+        System.out.println("GET Response: " + response.asString());
     }
 
     @Then("the customer details are retrieved with status code {int}")
     public void theCustomerDetailsAreRetrievedWithStatusCode(int statusCode) {
-        Assert.assertEquals(response.getStatusCode(), statusCode,
-                "Status code mismatch for retrieving customer details.");
-        Assert.assertEquals(response.jsonPath().getString("email"), customerEmail,
-                "Customer email mismatch.");
+        Assert.assertEquals(response.getStatusCode(), statusCode, "Failed to retrieve customer.");
+        Assert.assertEquals(response.jsonPath().getString("email"), customerEmail, "Customer email mismatch.");
     }
 
     @When("I send a PUT request to update the customer email")
     public void iSendAPutRequestToUpdateTheCustomerEmail() {
         String updatedEmail = "updated_" + generateRandomString(5) + "@example.com";
-
         HashMap<String, String> requestBody = new HashMap<>();
         requestBody.put("email", updatedEmail);
 
@@ -74,13 +83,17 @@ public class CustomerStepDefinitions {
                 .body(requestBody)
                 .when().put(baseURI + customerId);
 
-        customerEmail = updatedEmail;
+        System.out.println("PUT Response: " + response.asString());
+        if (response.statusCode() == 200) {
+            customerEmail = updatedEmail;
+        } else {
+            System.err.println("Failed to update customer email. Status code: " + response.statusCode());
+        }
     }
 
     @Then("the customer email is updated successfully with status code {int}")
     public void theCustomerEmailIsUpdatedSuccessfullyWithStatusCode(int statusCode) {
-        Assert.assertEquals(response.getStatusCode(), statusCode,
-                "Status code mismatch for updating customer email.");
+        Assert.assertEquals(response.getStatusCode(), statusCode, "Customer email update failed.");
     }
 
     @When("I send a DELETE request to delete the customer")
@@ -89,18 +102,12 @@ public class CustomerStepDefinitions {
                 .auth().preemptive().basic(Config.CONSUMER_KEY, Config.CONSUMER_SECRET)
                 .when().delete(baseURI + customerId + "?force=true");
 
-        // Log the response for debugging purposes
-        System.out.println("DELETE Response Status Code: " + response.getStatusCode());
-        System.out.println("DELETE Response Body: " + response.getBody().asString());
+        System.out.println("DELETE Response: " + response.asString());
     }
 
     @Then("the customer is deleted successfully with status code {int}")
-    public void theCustomerIsDeletedSuccessfullyWithStatusCode(int expectedStatusCode) {
-        int actualStatusCode = response.getStatusCode();
-
-        // Validate the status code
-        Assert.assertEquals(actualStatusCode, expectedStatusCode,
-                "Status code mismatch for deleting the customer. Expected: " + expectedStatusCode + " but got: " + actualStatusCode);
+    public void theCustomerIsDeletedSuccessfullyWithStatusCode(int statusCode) {
+        Assert.assertEquals(response.getStatusCode(), statusCode, "Customer deletion failed.");
     }
 
     private String generateRandomString(int length) {

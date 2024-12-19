@@ -3,11 +3,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.iqrashoppingdemo</groupId>
-  <artifactId>qa-iqrashoppingdemo_v9</artifactId>
-  <version>1.9</version>
+  <artifactId>qa-iqrashoppingdemo_v10</artifactId>
+  <version>1.10</version>
   <packaging>jar</packaging>
 
-  <name>qa-iqrashoppingdemo</name>
+  <name>qa-iqrashoppingdemo_v10</name>
   <url>http://maven.apache.org</url>
 
   <properties>
@@ -17,21 +17,24 @@
   </properties>
 
   <dependencies>
-    <!-- RestAssured for API Testing -->
+    <!-- Cucumber Dependencies -->
     <dependency>
-      <groupId>io.rest-assured</groupId>
-      <artifactId>rest-assured</artifactId>
-      <version>5.3.0</version>
+      <groupId>io.cucumber</groupId>
+      <artifactId>cucumber-java</artifactId>
+      <version>7.14.0</version>
+    </dependency>
+    <dependency>
+      <groupId>io.cucumber</groupId>
+      <artifactId>cucumber-testng</artifactId>
+      <version>7.14.0</version>
+    </dependency>
+    <dependency>
+      <groupId>io.cucumber</groupId>
+      <artifactId>cucumber-core</artifactId>
+      <version>7.14.0</version>
     </dependency>
 
-    <!-- Jackson Databind for JSON -->
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>2.15.2</version>
-    </dependency>
-
-    <!-- TestNG for Testing -->
+    <!-- TestNG -->
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
@@ -39,25 +42,54 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- ExtentReports for Reporting -->
+    <!-- RestAssured for API Testing -->
+    <dependency>
+      <groupId>io.rest-assured</groupId>
+      <artifactId>rest-assured</artifactId>
+      <version>5.3.0</version>
+    </dependency>
+    <dependency>
+      <groupId>io.rest-assured</groupId>
+      <artifactId>json-path</artifactId>
+      <version>5.3.0</version>
+    </dependency>
+    <dependency>
+      <groupId>io.rest-assured</groupId>
+      <artifactId>xml-path</artifactId>
+      <version>5.3.0</version>
+    </dependency>
+
+    <!-- SLF4J for Logging -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>2.0.9</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>2.0.9</version>
+    </dependency>
+
+    <!-- ExtentReports -->
     <dependency>
       <groupId>com.aventstack</groupId>
       <artifactId>extentreports</artifactId>
       <version>5.1.2</version>
     </dependency>
 
-    <!-- Cucumber Java for BDD -->
+    <!-- Gson for JSON Handling -->
     <dependency>
-      <groupId>io.cucumber</groupId>
-      <artifactId>cucumber-java</artifactId>
-      <version>7.13.0</version>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.10.1</version>
     </dependency>
 
-    <!-- Cucumber JUnit for Test Runner -->
+    <!-- Jackson for JSON -->
     <dependency>
-      <groupId>io.cucumber</groupId>
-      <artifactId>cucumber-junit</artifactId>
-      <version>7.13.0</version>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.15.2</version>
     </dependency>
   </dependencies>
 
@@ -74,17 +106,15 @@
         </configuration>
       </plugin>
 
-      <!-- Surefire Plugin for Running Tests -->
+      <!-- Surefire Plugin for Test Execution -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.0.0</version>
         <configuration>
-          <systemPropertyVariables>
-            <cucumber.plugin>html:target/cucumber-reports.html,json:target/cucumber.json</cucumber.plugin>
-          </systemPropertyVariables>
           <includes>
             <include>**/*Test*.java</include>
+            <include>**/TestRunner.java</include>
           </includes>
         </configuration>
       </plugin>

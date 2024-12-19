@@ -1,5 +1,6 @@
-Feature: Customer Workflow
+Feature: Customer Workflow with Hooks
 
+  @Critical
   Scenario: Create a new customer
     Given the API base URL is configured
     When I send a POST request to create a customer
