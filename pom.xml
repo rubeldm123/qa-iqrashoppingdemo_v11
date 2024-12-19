@@ -3,11 +3,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.iqrashoppingdemo</groupId>
-  <artifactId>qa-iqrashoppingdemo_v10</artifactId>
-  <version>1.10</version>
+  <artifactId>qa-iqrashoppingdemo_v11</artifactId>
+  <version>1.11</version>
   <packaging>jar</packaging>
 
-  <name>qa-iqrashoppingdemo_v10</name>
+  <name>qa-iqrashoppingdemo_v11</name>
   <url>http://maven.apache.org</url>
 
   <properties>
