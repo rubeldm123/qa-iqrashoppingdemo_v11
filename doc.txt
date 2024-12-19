@@ -420,14 +420,14 @@ Section2: git and Github
 
         Step 2: Create a Repository and Link the Remote Repository
             1. Add the GitHub repository as the remote origin:
-                > git remote set-url origin https://github.com/rubeldm123/qa-iqrashoppingdemo_v9.git
+                > git remote set-url origin https://github.com/rubeldm123/qa-iqrashoppingdemo_v10.git
 
             2. Verify the remote link:
-                > mds-MacBook-Pro:qa-iqrashoppingdemo_v8 mdrubel$ git remote -v
+                > git remote -v
         Step 43: Push Code to GitHub
             1. Push the code to the main branch:
-                > mds-MacBook-Pro:qa-iqrashoppingdemo_v8 mdrubel$ git branch -M main
-                > mds-MacBook-Pro:qa-iqrashoppingdemo_v8 mdrubel$ git push -u origin main
+                >  git branch -M main
+                > git push -u origin main
 
 
 Section 3: Run proect from Jenkins
@@ -516,7 +516,7 @@ For Windows:
                 steps {
                     git branch: 'main',
                         credentialsId: 'github-credentials',
-                        url: 'https://github.com/rubeldm123/qa-iqrashoppingdemo_v8.git'
+                        url: 'https://github.com/rubeldm123/qa-iqrashoppingdemo_v10.git'
                 }
             }
 
